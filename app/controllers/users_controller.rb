@@ -1,8 +1,23 @@
 class UsersController < ApplicationController
 
   def login
+	  unless params[:email]
+			render json: {error: "Email is missing"}, status: :unprocessable_entity
+			return
+		end
+	  unless params[:password]
+			render json: {error: "Password is missing"}, status: :unprocessable_entity
+			return
+		end
+	  unless params[:kind]
+			render json: {error: "Kind is missing"}, status: :unprocessable_entity
+			return
+		end
 		user = User.find_by(email: params[:email])
 		if user && user.authenticate(params[:password])
+      if user.kind != params[:kind]
+        render json: {error: 'Invalid login'}, status: :unauthorized
+      end
 			render json: {id: user.id}, status: :ok
 		else
 			render json: {error: 'Wrong email or password'}, status: :unauthorized
