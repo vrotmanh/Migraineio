@@ -18,7 +18,22 @@ class UsersController < ApplicationController
 				render json: {error: user.errors.full_messages}, status: :unprocessable_entity
 			end
 		else
-			render json: {error: user.errors.full_messages}, status: :unprocessable_entity
+			unless params[:name]
+				render json: {error: "Name is missing"}, status: :unprocessable_entity
+				return
+			end
+			unless params[:email]
+				render json: {error: "Email is missing"}, status: :unprocessable_entity
+				return
+			end
+			unless params[:password]
+				render json: {error: "Password is missing"}, status: :unprocessable_entity
+				return
+			end
+			unless params[:kind]
+				render json: {error: "Kind is missing"}, status: :unprocessable_entity
+				return
+			end
 		end
   end
 end

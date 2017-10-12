@@ -9,7 +9,18 @@ class AlgorithmsController < ApplicationController
         render json: {error: algorithm.errors.full_messages}, status: :unprocessable_entity
       end
     else
-      render json: {error: algorithm.errors.full_messages}, status: :unprocessable_entity
+			unless params[:name]
+				render json: {error: "Name is missing"}, status: :unprocessable_entity
+				return
+			end
+			unless params[:code]
+				render json: {error: "Code is missing"}, status: :unprocessable_entity
+				return
+			end
+			unless params[:user_id]
+				render json: {error: "User Id is missing"}, status: :unprocessable_entity
+				return
+			end
     end
   end
 end
