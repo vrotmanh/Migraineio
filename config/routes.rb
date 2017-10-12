@@ -9,4 +9,7 @@ Rails.application.routes.draw do
   # Algorithms
   post "algorithm/create", to: "algorithms#create"
   get "algorithms", to: "algorithms#show"
+
+  #Report
+  get "train_data", to: "reports#train_data"
 end
