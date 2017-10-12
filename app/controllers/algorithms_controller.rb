@@ -1,5 +1,13 @@
 class AlgorithmsController < ApplicationController
 
+  def show
+    if params[:user_id]
+      @algorithms = Algorithm.where(user_id: params[:user_id])
+    else
+      @algorithms = Algorithm.all
+    end
+  end
+
   def create
     if params[:code] and params[:name] and params[:user_id]
       algorithm = Algorithm.create(name: params[:name], code: params[:code], user_id: params[:user_id])
