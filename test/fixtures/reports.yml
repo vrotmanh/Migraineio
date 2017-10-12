@@ -1,0 +1,23 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  stress: 1
+  anxiety: 1
+  sleep_time: 1.5
+  chocolate: false
+  cheese: false
+  sinus: false
+  caffeine: false
+  skipped_meal: false
+  prediction: false
+
+two:
+  stress: 1
+  anxiety: 1
+  sleep_time: 1.5
+  chocolate: false
+  cheese: false
+  sinus: false
+  caffeine: false
+  skipped_meal: false
+  prediction: false

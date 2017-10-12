@@ -10,4 +10,5 @@ class User < ApplicationRecord
   validates :password, presence: true, length: { minimum: 6 }
 
   has_many :algorithms, dependent: :destroy
+  has_many :reports, dependent: :destroy
 end
