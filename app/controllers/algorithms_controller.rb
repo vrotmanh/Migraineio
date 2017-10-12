@@ -1,2 +1,3 @@
 class AlgorithmsController < ApplicationController
+
 end
