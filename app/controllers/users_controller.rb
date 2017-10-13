@@ -17,8 +17,9 @@ class UsersController < ApplicationController
 		if user && user.authenticate(params[:password])
       if user.kind != params[:kind]
         render json: {error: 'Invalid login'}, status: :unauthorized
+      else
+        render json: {id: user.id, name: user.name}, status: :ok
       end
-			render json: {id: user.id}, status: :ok
 		else
 			render json: {error: 'Wrong email or password'}, status: :unauthorized
 		end
