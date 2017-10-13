@@ -12,6 +12,14 @@ class AlgorithmsController < ApplicationController
     if params[:code] and params[:name] and params[:user_id]
       algorithm = Algorithm.create(name: params[:name], code: params[:code], user_id: params[:user_id])
       if algorithm.errors.empty?
+        begin
+          eval(algorithm.code)
+          alg(Report.last)
+        rescue => ex
+          algorithm.destroy
+          render json: {error: ex.message}, status: :unprocessable_entity
+          return
+        end
         render json: {id: algorithm.id, name: algorithm.name}, status: :created
       else
         render json: {error: algorithm.errors.full_messages}, status: :unprocessable_entity
