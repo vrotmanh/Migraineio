@@ -12,4 +12,5 @@ Rails.application.routes.draw do
 
   #Report
   get "train_data", to: "reports#train_data"
+  post "report", to: "reports#create"
 end

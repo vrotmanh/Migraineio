@@ -6,6 +6,58 @@ class ReportsController < ApplicationController
 		render json: res, status: :ok
   end
 
+  def create
+	  unless params[:user_id]
+			render json: {error: "User Id is missing"}, status: :unprocessable_entity
+			return
+		end
+	  unless params[:stress]
+			render json: {error: "Stress is missing"}, status: :unprocessable_entity
+			return
+		end
+	  unless params[:anxiety]
+			render json: {error: "Anxiety is missing"}, status: :unprocessable_entity
+			return
+		end
+	  unless params[:sleep_time]
+			render json: {error: "Sleep Time is missing"}, status: :unprocessable_entity
+			return
+		end
+	  unless params[:chocolate]
+			render json: {error: "Chocolate is missing"}, status: :unprocessable_entity
+			return
+		end
+	  unless params[:cheese]
+			render json: {error: "Cheese is missing"}, status: :unprocessable_entity
+			return
+		end
+	  unless params[:sinus]
+			render json: {error: "Sinus is missing"}, status: :unprocessable_entity
+			return
+		end
+	  unless params[:caffeine]
+			render json: {error: "Caffeine is missing"}, status: :unprocessable_entity
+			return
+		end
+	  unless params[:skipped_meal]
+			render json: {error: "Skipped Meal is missing"}, status: :unprocessable_entity
+			return
+		end
+    algorithm = Algorithm.order("accuracy DESC").first
+    report = Report.create(user: User.find(params[:user_id].to_i), stress: params[:stress], anxiety: params[:anxiety],
+                          sleep_time: params[:sleep_time], chocolate: params[:chocolate], cheese: params[:cheese], sinus: params[:sinus],
+                         caffeine: params[:caffeine], skipped_meal: params[:skipped_meal], algorithm: algorithm)
+		if report.errors.empty?
+      eval(algorithm.code)
+      result = alg(report)
+      report.prediction = result
+      report.save
+			render json: {result: result}, status: :created
+		else
+			render json: {error: report.errors.full_messages}, status: :unprocessable_entity
+		end
+  end
+
   private
   	def to_csv(reports)
     	attributes = %w{user_id stress anxiety sleep_time chocolate cheese sinus caffeine skipped_meal label}
