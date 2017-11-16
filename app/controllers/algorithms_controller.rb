@@ -10,7 +10,8 @@ class AlgorithmsController < ApplicationController
 
   def create
     if params[:code] and params[:name] and params[:user_id]
-      algorithm = Algorithm.create(name: params[:name], code: params[:code], user_id: params[:user_id])
+      condition = params[:condition] or 'cervical_cancer'
+      algorithm = Algorithm.create(name: params[:name], code: params[:code], user_id: params[:user_id], condition: condition)
       if algorithm.errors.empty?
         begin
           eval(algorithm.code)

@@ -16,7 +16,7 @@ class ReportsController < ApplicationController
 		if report.errors.empty?
       c = "`python -c '#{algorithm.code}'`"
       r = eval(c)
-      report.prediction = r
+      report.hinselmann_prediction = r
       report.save
 			render json: {result: r}, status: :created
 		else
