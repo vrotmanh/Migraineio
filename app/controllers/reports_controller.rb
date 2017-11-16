@@ -48,9 +48,8 @@ class ReportsController < ApplicationController
                           sleep_time: params[:sleep_time], chocolate: params[:chocolate], cheese: params[:cheese], sinus: params[:sinus],
                          caffeine: params[:caffeine], skipped_meal: params[:skipped_meal], algorithm: algorithm)
 		if report.errors.empty?
-      eval(algorithm.code)
-      result = alg(report)
-      report.prediction = result
+      r = `python -c "print(1)"`
+      report.prediction = r
       report.save
 			render json: {result: result}, status: :created
 		else
