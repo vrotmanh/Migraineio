@@ -6,7 +6,25 @@ class ReportsController < ApplicationController
 		render json: res, status: :ok
   end
 
-  def create
+  def create_cervical_cancer
+	  unless params[:user_id]
+			render json: {error: "User Id is missing"}, status: :unprocessable_entity
+			return
+		end
+    algorithm = Algorithm.where(condition: 'cervical_cancer').order("accuracy DESC").first
+    report = CervicalCancerReport.create(user: User.find(params[:user_id].to_i), algorithm: algorithm, age: params[:age])
+		if report.errors.empty?
+      c = "`python -c '#{algorithm.code}'`"
+      r = eval(c)
+      report.prediction = r
+      report.save
+			render json: {result: r}, status: :created
+		else
+			render json: {error: report.errors.full_messages}, status: :unprocessable_entity
+		end
+  end
+
+  def create_migraine
 	  unless params[:user_id]
 			render json: {error: "User Id is missing"}, status: :unprocessable_entity
 			return
@@ -43,7 +61,7 @@ class ReportsController < ApplicationController
 			render json: {error: "Skipped Meal is missing"}, status: :unprocessable_entity
 			return
 		end
-    algorithm = Algorithm.order("accuracy DESC").first
+    algorithm = Algorithm.where(condition: 'migraine').order("accuracy DESC").first
     report = MigraineReport.create(user: User.find(params[:user_id].to_i), stress: params[:stress], anxiety: params[:anxiety],
                           sleep_time: params[:sleep_time], chocolate: params[:chocolate], cheese: params[:cheese], sinus: params[:sinus],
                          caffeine: params[:caffeine], skipped_meal: params[:skipped_meal], algorithm: algorithm)

@@ -12,5 +12,6 @@ Rails.application.routes.draw do
 
   #Report
   get "train_data", to: "reports#train_data"
-  post "report", to: "reports#create"
+  post "report/migraine", to: "reports#create_migraine"
+  post "report/cervical_cancer", to: "reports#create_cervical_cancer"
 end
