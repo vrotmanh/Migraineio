@@ -4,4 +4,5 @@ class Algorithm < ApplicationRecord
 
   belongs_to :user
   has_many :migraine_reports
+  has_many :cervical_cancer_reports
 end

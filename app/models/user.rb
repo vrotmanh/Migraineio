@@ -11,4 +11,5 @@ class User < ApplicationRecord
 
   has_many :algorithms, dependent: :destroy
   has_many :migraine_reports, dependent: :destroy
+  has_many :cervical_cancer_reports, dependent: :destroy
 end
