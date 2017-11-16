@@ -14,7 +14,7 @@ class AlgorithmsController < ApplicationController
       if algorithm.errors.empty?
         begin
           eval(algorithm.code)
-          alg(Report.last)
+          alg(MigraineReport.last)
         rescue => ex
           algorithm.destroy
           render json: {error: ex.message}, status: :unprocessable_entity

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171012233639) do
+ActiveRecord::Schema.define(version: 20171116214932) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -24,7 +24,7 @@ ActiveRecord::Schema.define(version: 20171012233639) do
     t.float "accuracy", default: 0.0
   end
 
-  create_table "reports", force: :cascade do |t|
+  create_table "migraine_reports", force: :cascade do |t|
     t.integer "stress"
     t.integer "anxiety"
     t.float "sleep_time"

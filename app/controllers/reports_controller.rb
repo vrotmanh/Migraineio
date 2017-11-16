@@ -1,7 +1,7 @@
 class ReportsController < ApplicationController
 
   def train_data
-    reports = Report.where(train_data: true)
+    reports = MigraineReport.where(train_data: true)
     res = to_csv(reports)
 		render json: res, status: :ok
   end
@@ -44,7 +44,7 @@ class ReportsController < ApplicationController
 			return
 		end
     algorithm = Algorithm.order("accuracy DESC").first
-    report = Report.create(user: User.find(params[:user_id].to_i), stress: params[:stress], anxiety: params[:anxiety],
+    report = MigraineReport.create(user: User.find(params[:user_id].to_i), stress: params[:stress], anxiety: params[:anxiety],
                           sleep_time: params[:sleep_time], chocolate: params[:chocolate], cheese: params[:cheese], sinus: params[:sinus],
                          caffeine: params[:caffeine], skipped_meal: params[:skipped_meal], algorithm: algorithm)
 		if report.errors.empty?
