@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171116225730) do
+ActiveRecord::Schema.define(version: 20171116231723) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,6 +22,7 @@ ActiveRecord::Schema.define(version: 20171116225730) do
     t.integer "user_id"
     t.string "name"
     t.float "accuracy", default: 0.0
+    t.string "condition"
   end
 
   create_table "cervical_cancer_reports", force: :cascade do |t|
