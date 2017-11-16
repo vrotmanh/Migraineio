@@ -1,0 +1,2 @@
+class CervicalCancerReport < ApplicationRecord
+end
