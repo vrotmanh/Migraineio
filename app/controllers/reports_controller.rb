@@ -1,6 +1,5 @@
 class ReportsController < ApplicationController
 
-
   def train_data
     reports = Report.where(train_data: true)
     res = to_csv(reports)
