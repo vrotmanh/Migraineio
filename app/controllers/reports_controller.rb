@@ -12,11 +12,41 @@ class ReportsController < ApplicationController
 			return
 		end
     algorithm = Algorithm.where(condition: 'cervical_cancer').order("accuracy DESC").first
-    report = CervicalCancerReport.create(user: User.find(params[:user_id].to_i), algorithm: algorithm, age: params[:age])
+    report = CervicalCancerReport.create(user: User.find(params[:user_id].to_i), algorithm: algorithm, age: params[:age],
+                                         sexual_partners: params[:sexual_partners], first_sex_age: params[:first_sex_age],
+                                        num_pregnancy: params[:num_pregnancy], smoker: params[:smoker],
+                                        smoke_years: params[:smoke_years], packs_a_year: params[:packs_a_year],
+                                        hormonal_contraceptive: params[:hormonal_contraceptive],
+                                        hormonal_contraceptive_years: params[:hormonal_contraceptive_years],
+                                        iud: params[:iud], iud_years: params[:iud_years], stds: params[:stds],
+                                        num_stds: params[:num_stds], std_condylomatosis: params[:std_condylomatosis],
+                                        std_cervical_condylomatosis: params[:std_cervical_condylomatosis],
+                                        std_vaginal_condylomatosis: params[:std_vaginal_condylomatosis],
+                                        std_vulvo_perineal_condylomatosis: params[:std_vulvo_perineal_condylomatosis],
+                                        std_syphilis: params[:std_syphilis], std_pelvic_inflamatory_disease: params[:std_pelvic_inflamatory_disease],
+                                        std_genital_herpes: params[:std_genital_herpes], std_molluscum_contagiosum: params[:std_molluscum_contagiosum],
+                                        std_aids: params[:std_aids], std_hiv: params[:std_hiv], std_hepatitis_b: params[:std_hepatitis_b],
+                                        std_hpv: params[:std_hpv], std_num_diagnosis: params[:std_num_diagnosis],
+                                        std_time_first_diagnosis: params[:std_time_first_diagnosis], std_time_last_diagnosis: params[:std_time_last_diagnosis],
+                                        dx_cancer: params[:dx_cancer], dx_cin: params[:dx_cin], dx_hpv: params[:dx_hpv], dx: params[:dx])
 		if report.errors.empty?
-      c = "`python -c '#{algorithm.code}'`"
+      report_python = "report = [#{params[:age]},#{params[:sexual_partners]},#{params[:first_sex_age]},#{params[:num_pregnancy]},#{params[:smoker]},#{params[:smoke_years]},#{params[:packs_a_year]},#{params[:hormonal_contraceptive]},#{params[:hormonal_contraceptive_years]},#{params[:iud]},#{params[:iud_years]},#{params[:stds]},#{params[:num_stds]},#{params[:std_condylomatosis]},#{params[:std_cervical_condylomatosis]},#{params[:std_vaginal_condylomatosis]},#{params[:std_vulvo_perineal_condylomatosis]},#{params[:std_syphilis]},#{params[:std_pelvic_inflamatory_disease]},#{params[:std_genital_herpes]},#{params[:std_molluscum_contagiosum]},#{params[:std_aids]},#{params[:std_hiv]},#{params[:std_hepatitis_b]},#{params[:std_hpv]},#{params[:std_num_diagnosis]},#{params[:std_time_first_diagnosis]},#{params[:std_time_last_diagnosis]},#{params[:dx_cancer]},#{params[:dx_cin]},#{params[:dx_hpv]},#{params[:dx]}]"
+      train_data_python = "train_data = ["
+      CervicalCancerReport.where(train_data: true).each_with_index do |report, index|
+        if index==0
+          train_data_python = train_data_python + "[#{report.age},#{report.sexual_partners},#{report.first_sex_age},#{report.num_pregnancy},#{report.smoker},#{report.smoke_years},#{report.packs_a_year},#{report.hormonal_contraceptive},#{report.hormonal_contraceptive_years},#{report.iud},#{report.iud_years},#{report.stds},#{report.num_stds},#{report.std_condylomatosis},#{report.std_cervical_condylomatosis},#{report.std_vaginal_condylomatosis},#{report.std_vulvo_perineal_condylomatosis},#{report.std_syphilis},#{report.std_pelvic_inflamatory_disease},#{report.std_genital_herpes},#{report.std_molluscum_contagiosum},#{report.std_aids},#{report.std_hiv},#{report.std_hepatitis_b},#{report.std_hpv},#{report.std_num_diagnosis},#{report.std_time_first_diagnosis},#{report.std_time_last_diagnosis},#{report.dx_cancer},#{report.dx_cin},#{report.dx_hpv},#{report.dx}]"
+        else
+          train_data_python = train_data_python + ",[#{report.age},#{report.sexual_partners},#{report.first_sex_age},#{report.num_pregnancy},#{report.smoker},#{report.smoke_years},#{report.packs_a_year},#{report.hormonal_contraceptive},#{report.hormonal_contraceptive_years},#{report.iud},#{report.iud_years},#{report.stds},#{report.num_stds},#{report.std_condylomatosis},#{report.std_cervical_condylomatosis},#{report.std_vaginal_condylomatosis},#{report.std_vulvo_perineal_condylomatosis},#{report.std_syphilis},#{report.std_pelvic_inflamatory_disease},#{report.std_genital_herpes},#{report.std_molluscum_contagiosum},#{report.std_aids},#{report.std_hiv},#{report.std_hepatitis_b},#{report.std_hpv},#{report.std_num_diagnosis},#{report.std_time_first_diagnosis},#{report.std_time_last_diagnosis},#{report.dx_cancer},#{report.dx_cin},#{report.dx_hpv},#{report.dx}]"
+        end
+      end
+      train_data_python = train_data_python + "]"
+      run_python = algorithm.code + '\n'+train_data_python+'\n'+report_python+'\nres=algo(train_data,report)\nprint(res)'
+      c = "`python -c '#{run_python}'`"
       r = eval(c)
-      report.hinselmann_prediction = r
+      puts '----------------------------------------RESULT---------------------------------'
+      puts r
+      puts '----------------------------------------RESULT---------------------------------'
+      #report.hinselmann_prediction = r
       report.save
 			render json: {result: r}, status: :created
 		else
