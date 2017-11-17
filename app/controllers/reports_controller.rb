@@ -30,25 +30,42 @@ class ReportsController < ApplicationController
                                         std_time_first_diagnosis: params[:std_time_first_diagnosis], std_time_last_diagnosis: params[:std_time_last_diagnosis],
                                         dx_cancer: params[:dx_cancer], dx_cin: params[:dx_cin], dx_hpv: params[:dx_hpv], dx: params[:dx])
 		if report.errors.empty?
-      report_python = "report = [#{params[:age]},#{params[:sexual_partners]},#{params[:first_sex_age]},#{params[:num_pregnancy]},#{params[:smoker]},#{params[:smoke_years]},#{params[:packs_a_year]},#{params[:hormonal_contraceptive]},#{params[:hormonal_contraceptive_years]},#{params[:iud]},#{params[:iud_years]},#{params[:stds]},#{params[:num_stds]},#{params[:std_condylomatosis]},#{params[:std_cervical_condylomatosis]},#{params[:std_vaginal_condylomatosis]},#{params[:std_vulvo_perineal_condylomatosis]},#{params[:std_syphilis]},#{params[:std_pelvic_inflamatory_disease]},#{params[:std_genital_herpes]},#{params[:std_molluscum_contagiosum]},#{params[:std_aids]},#{params[:std_hiv]},#{params[:std_hepatitis_b]},#{params[:std_hpv]},#{params[:std_num_diagnosis]},#{params[:std_time_first_diagnosis]},#{params[:std_time_last_diagnosis]},#{params[:dx_cancer]},#{params[:dx_cin]},#{params[:dx_hpv]},#{params[:dx]}]"
-      train_data_python = "train_data = ["
-      CervicalCancerReport.where(train_data: true).each_with_index do |report, index|
-        if index==0
-          train_data_python = train_data_python + "[#{report.age},#{report.sexual_partners},#{report.first_sex_age},#{report.num_pregnancy},#{report.smoker},#{report.smoke_years},#{report.packs_a_year},#{report.hormonal_contraceptive},#{report.hormonal_contraceptive_years},#{report.iud},#{report.iud_years},#{report.stds},#{report.num_stds},#{report.std_condylomatosis},#{report.std_cervical_condylomatosis},#{report.std_vaginal_condylomatosis},#{report.std_vulvo_perineal_condylomatosis},#{report.std_syphilis},#{report.std_pelvic_inflamatory_disease},#{report.std_genital_herpes},#{report.std_molluscum_contagiosum},#{report.std_aids},#{report.std_hiv},#{report.std_hepatitis_b},#{report.std_hpv},#{report.std_num_diagnosis},#{report.std_time_first_diagnosis},#{report.std_time_last_diagnosis},#{report.dx_cancer},#{report.dx_cin},#{report.dx_hpv},#{report.dx}]"
-        else
-          train_data_python = train_data_python + ",[#{report.age},#{report.sexual_partners},#{report.first_sex_age},#{report.num_pregnancy},#{report.smoker},#{report.smoke_years},#{report.packs_a_year},#{report.hormonal_contraceptive},#{report.hormonal_contraceptive_years},#{report.iud},#{report.iud_years},#{report.stds},#{report.num_stds},#{report.std_condylomatosis},#{report.std_cervical_condylomatosis},#{report.std_vaginal_condylomatosis},#{report.std_vulvo_perineal_condylomatosis},#{report.std_syphilis},#{report.std_pelvic_inflamatory_disease},#{report.std_genital_herpes},#{report.std_molluscum_contagiosum},#{report.std_aids},#{report.std_hiv},#{report.std_hepatitis_b},#{report.std_hpv},#{report.std_num_diagnosis},#{report.std_time_first_diagnosis},#{report.std_time_last_diagnosis},#{report.dx_cancer},#{report.dx_cin},#{report.dx_hpv},#{report.dx}]"
+      CSV.open("dataset.csv", "wb") do |csv|
+        CervicalCancerReport.where(train_data: true).each do |report|
+          csv << [report.age, report.sexual_partners, report.first_sex_age, report.num_pregnancy, report.smoker, report.smoke_years, report.packs_a_year, report.hormonal_contraceptive, report.hormonal_contraceptive_years, report.iud, report.iud_years, report.stds, report.num_stds, report.std_condylomatosis, report.std_cervical_condylomatosis, report.std_vaginal_condylomatosis, report.std_vulvo_perineal_condylomatosis, report.std_syphilis, report.std_pelvic_inflamatory_disease, report.std_genital_herpes, report.std_molluscum_contagiosum, report.std_aids, report.std_hiv, report.std_hepatitis_b, report.std_hpv, report.std_num_diagnosis, report.std_time_first_diagnosis, report.std_time_last_diagnosis, report.dx_cancer, report.dx_cin, report.dx_hpv, report.dx, report.hinselmann_label, report.schiller_label, report.cytology_label, report.biopsy_label ]
         end
       end
-      train_data_python = train_data_python + "]"
-      run_python = algorithm.code + '\n'+train_data_python+'\n'+report_python+'\nres=algo(train_data,report)\nprint(res)'
+      report_python = "report = [#{params[:age]},#{params[:sexual_partners]},#{params[:first_sex_age]},#{params[:num_pregnancy]},#{params[:smoker]},#{params[:smoke_years]},#{params[:packs_a_year]},#{params[:hormonal_contraceptive]},#{params[:hormonal_contraceptive_years]},#{params[:iud]},#{params[:iud_years]},#{params[:stds]},#{params[:num_stds]},#{params[:std_condylomatosis]},#{params[:std_cervical_condylomatosis]},#{params[:std_vaginal_condylomatosis]},#{params[:std_vulvo_perineal_condylomatosis]},#{params[:std_syphilis]},#{params[:std_pelvic_inflamatory_disease]},#{params[:std_genital_herpes]},#{params[:std_molluscum_contagiosum]},#{params[:std_aids]},#{params[:std_hiv]},#{params[:std_hepatitis_b]},#{params[:std_hpv]},#{params[:std_num_diagnosis]},#{params[:std_time_first_diagnosis]},#{params[:std_time_last_diagnosis]},#{params[:dx_cancer]},#{params[:dx_cin]},#{params[:dx_hpv]},#{params[:dx]}]"
+      header = "import numpy\ntrain_data=numpy.loadtxt(open(\"dataset.csv\",\"rb\"), delimiter=\",\").tolist()\n" + report_python
+      run_python = header + '\n' + algorithm.code + '\nres=algo(train_data,report)\nprint(res)'
       c = "`python -c '#{run_python}'`"
-      r = eval(c)
+      r = eval(c).delete!("\n").delete!("[").delete!("]").delete!(" ").split(',')
+      r = r.map(&:to_f)
       puts '----------------------------------------RESULT---------------------------------'
       puts r
       puts '----------------------------------------RESULT---------------------------------'
-      #report.hinselmann_prediction = r
+      if r[0] != 0.0
+        report.hinselmann_prediction = true
+      else
+        report.hinselmann_prediction = false
+      end
+      if r[1] != 0.0
+        report.schiller_prediction = true
+      else
+        report.schiller_prediction = false
+      end
+      if r[2] != 0.0
+        report.cytology_prediction = true
+      else
+        report.cytology_prediction = false
+      end
+      if r[3] != 0.0
+        report.biopsy_prediction = true
+      else
+        report.biopsy_prediction = false
+      end
       report.save
-			render json: {result: r}, status: :created
+      render json: {hinselmann: report.hinselmann_prediction, schiller: report.schiller_prediction, cytology: report.cytology_prediction, biopsy: report.cytology_prediction }, status: :created
 		else
 			render json: {error: report.errors.full_messages}, status: :unprocessable_entity
 		end

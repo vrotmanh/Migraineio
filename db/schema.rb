@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171116231723) do
+ActiveRecord::Schema.define(version: 20171117033742) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -62,10 +62,10 @@ ActiveRecord::Schema.define(version: 20171116231723) do
     t.boolean "schiller_prediction"
     t.boolean "cytology_prediction"
     t.boolean "biopsy_prediction"
-    t.boolean "hinselmann_label"
-    t.boolean "schiller_label"
-    t.boolean "cytology_label"
-    t.boolean "biopsy_label"
+    t.float "hinselmann_label"
+    t.float "schiller_label"
+    t.float "cytology_label"
+    t.float "biopsy_label"
     t.boolean "train_data"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
