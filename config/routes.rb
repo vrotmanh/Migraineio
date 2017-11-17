@@ -11,7 +11,8 @@ Rails.application.routes.draw do
   get "algorithms", to: "algorithms#show"
 
   #Report
-  get "train_data", to: "reports#train_data"
+  get "train_data/migraine", to: "reports#train_data_migraine"
+  get "train_data/cervical_cancer", to: "reports#train_data_cervical_cancer"
   post "report/migraine", to: "reports#create_migraine"
   post "report/cervical_cancer", to: "reports#create_cervical_cancer"
 end

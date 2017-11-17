@@ -1,7 +1,13 @@
 class ReportsController < ApplicationController
 
-  def train_data
+  def train_data_migraine
     reports = MigraineReport.where(train_data: true)
+    res = to_csv(reports)
+		render json: res, status: :ok
+  end
+
+  def train_data_cervical_cancer
+    reports = CervicalCancerReport.where(train_data: true)
     res = to_csv(reports)
 		render json: res, status: :ok
   end
